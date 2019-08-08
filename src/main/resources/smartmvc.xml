@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+	<!--name of controller -->
+	<bean class="demo.HelloController"/>
+	<bean class="demo.LoginController"/>
+</beans>
