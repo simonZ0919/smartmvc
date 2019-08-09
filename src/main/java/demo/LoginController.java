@@ -1,5 +1,7 @@
 package demo;
 
+import javax.servlet.http.HttpServletRequest;
+
 import base.annotation.RequestMapping;
 
 public class LoginController {
@@ -9,8 +11,16 @@ public class LoginController {
 	}
 	// redirect
 	@RequestMapping("/login.do")
-	public String checkLogin() {
-		return "redirect:toWelcome.do";
+	public String checkLogin(HttpServletRequest request) {
+		String username=request.getParameter("username");
+		String password=request.getParameter("pwd");
+		if("Tim".equals(username) && "123".equals(password)) {
+			return "redirect:toWelcome.do";
+		}else {
+			request.setAttribute("login_failed", "invalid username/password");
+			return "login";
+		}
+		
 	}
 	@RequestMapping("/toWelcome.do")
 	public String toWelcome() {

@@ -2,7 +2,7 @@ package base.web;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +64,7 @@ public class DispatcherServlet extends HttpServlet {
 	}
 	protected void service(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
 		String uri=request.getRequestURI();
 		// get application name
 		String contextPath=request.getContextPath();
@@ -73,8 +74,24 @@ public class DispatcherServlet extends HttpServlet {
 		// get handler from map
 		Handler handler=handlerMapping.getHandler(path);
 		Object returnVal=null;
-		try {// invoke method
-			returnVal=handler.getMethod().invoke(handler.getObject());
+		try {
+			Method method=handler.getMethod();
+
+			Class[] types=method.getParameterTypes();
+			if (types.length>0) {// has parameters
+				Object[] params=new Object[types.length];
+				for(int i=0;i<types.length;i++) {
+					if(types[i]==HttpServletRequest.class) {
+						params[i]=request;
+					}
+					if(types[i]==HttpServletResponse.class) {
+						params[i]=response;
+					}
+				}
+				returnVal=method.invoke(handler.getObject(), params);
+			}else {// no params
+				returnVal=method.invoke(handler.getObject());
+			}
 			String viewName=returnVal.toString();
 			// redirect
 			if(viewName.startsWith("redirect:")){
@@ -92,7 +109,5 @@ public class DispatcherServlet extends HttpServlet {
 			e.printStackTrace();
 			throw new ServletException(e);
 		} 
-		
 	}
-
 }

@@ -7,7 +7,8 @@
 	<form action="login.do" method="post">
 		<fieldset>
 			<legend>Login</legend>
-			Username: <input name="username"><br>
+			Username: <input name="username">
+			<span style="color:red;">${login_failed}</span><br>
 			Password: <input type="password" name="pwd"><br>
 			<input type="submit" value="Confirm">
 		</fieldset>
